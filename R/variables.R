@@ -209,7 +209,10 @@ create_variables <- function(parameters) {
   last_eff_pev_timestep <- individual::IntegerVariable$new(rep(-1, size))
   pev_profile <- individual::IntegerVariable$new(rep(-1, size))
 
-  tbv_vaccinated <- individual::DoubleVariable$new(rep(-1, size))
+  tbv_vaccinated <- individual::DoubleVariable$new(rep(-1, size)) # should be an IntegerVariable? # run model first, then change?
+  tbv_iiv1 <- rnorm(size, 0, 1) #boring
+  tbv_iiv2 <- rnorm(size, 0, 1) #boring
+  tbv_iiv3 <- rnorm(size, 0, 1) #boring
 
   # Init vector controls
   net_time <- individual::IntegerVariable$new(rep(-1, size))
@@ -238,6 +241,9 @@ create_variables <- function(parameters) {
     last_eff_pev_timestep = last_eff_pev_timestep,
     pev_profile = pev_profile,
     tbv_vaccinated = tbv_vaccinated,
+    tbv_iiv1 = tbv_iiv1,
+    tbv_iiv2 = tbv_iiv2, # but give better names
+    tbv_iiv3 = tbv_iiv3,
     net_time = net_time,
     spray_time = spray_time
   )

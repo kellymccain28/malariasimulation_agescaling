@@ -8,9 +8,11 @@ set_tbv <- function(
   parameters,
   timesteps,
   coverages,
-  ages
+  ages,
+  adult_scaling
   ) {
   stopifnot(all(coverages >= 0) && all(coverages <= 1))
+  stopifnot(adult_scaling > 1) # does this work? Could add to set_pev(), too
   if(length(coverages) != length(timesteps)){
     stop("coverages and timesteps do no align")
   }
