@@ -83,10 +83,10 @@ create_tbv_listener <- function(variables, events, parameters, correlations, ren
 
 #JDC: Add Age at vaccination
 calculate_tbv_antibodies <- function(t, tau, rho, ds, dl, adult_scaling){ # , age_at_vaccination. random variables, too!
-  scaling <- 1
-  if(age_at_vaccination > 16*365){
-    scaling = adult_scaling
-  }
+  #scaling <- 1
+  #if(age_at_vaccination > 16*365){
+  #  scaling = adult_scaling
+  #}
   
   #use vnapply
   
