@@ -26,7 +26,9 @@ account_for_tbv <- function(
       parameters$tbv_rho,
       parameters$tbv_ds,
       parameters$tbv_dl,
-      parameters$tbv_adult_scaling
+      parameters$tbv_adult_scaling#then add age
+      #get_age(variables$birth$get_values(vaccinated_in_state), vaccine_times), #Will this select the relevant time?
+      #variables$tbv_PK_zscore$get_values(vaccinated_in_state)
     )
     tra <- calculate_TRA(
       parameters$tbv_tra_mu,
@@ -80,7 +82,14 @@ create_tbv_listener <- function(variables, events, parameters, correlations, ren
 }
 
 #JDC: Add Age at vaccination
-calculate_tbv_antibodies <- function(t, tau, rho, ds, dl, adult_scaling){ # t, age at vaccination. Anything else?
+calculate_tbv_antibodies <- function(t, tau, rho, ds, dl, adult_scaling){ # , age_at_vaccination. random variables, too!
+  scaling <- 1
+  if(age_at_vaccination > 16*365){
+    scaling = adult_scaling
+  }
+  
+  #use vnapply
+  
   tau * adult_scaling * (rho * exp(-t * log(2) / ds) + (1 - rho) * exp(-t * log(2) / dl))
   #tau * (rho * exp(-t * log(2) / ds) + (1 - rho) * exp(-t * log(2) / dl))
 }

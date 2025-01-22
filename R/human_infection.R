@@ -84,7 +84,8 @@ calculate_infections <- function(
   vaccine_times <- variables$last_eff_pev_timestep$get_values(source_vector)
   pev_profile <- variables$pev_profile$get_values(source_vector)
   # get vector of individuals who have received their 3rd dose
-  vaccinated <- vaccine_times > -1
+  vaccinated <- vaccine_times > -1 # JDC: piggy back on this list?
+  #get_age(variables$birth$get_values(vaccinated), vaccine_times) #Will this select the relevant time?
   pev_profile <- pev_profile[vaccinated]
   if (length(vaccinated) > 0) {
     antibodies <- calculate_pev_antibodies(
@@ -93,6 +94,7 @@ calculate_infections <- function(
       invlogit(sample_pev_param(pev_profile, parameters$pev_profiles, 'rho')),
       exp(sample_pev_param(pev_profile, parameters$pev_profiles, 'ds')),
       exp(sample_pev_param(pev_profile, parameters$pev_profiles, 'dl')),
+      #JDC: whack age of individual in here?
       parameters
     )
     vmax <- vnapply(parameters$pev_profiles, function(p) p$vmax)

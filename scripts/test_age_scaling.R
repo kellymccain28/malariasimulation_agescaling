@@ -166,3 +166,95 @@ ggplot(gh) + geom_line(aes(x=t, y=ci)) +
   geom_line(aes(x=t, y=ci2A),color = 'magenta') +  
   geom_line(aes(x=t, y=ci2B),color = 'orange') +
   geom_line(aes(x=t, y=ci2C),color = 'darkgreen') 
+
+
+######################### 3. TBV only ##########################
+
+tbv_params <- set_tbv(
+  simparams,
+  timesteps = c(7,8)*year + peak - 2*month,
+  coverages = rep(0.9, 2),
+  adult_scaling = 1,
+  ages = c(5,87)
+)
+
+out3 <- run_simulation(sim_length, tbv_params)
+
+tbv_paramsA <- set_tbv(
+  simparams,
+  timesteps = c(7,8)*year + peak - 2*month,
+  coverages = rep(0.9, 2),
+  adult_scaling = 0.7,
+  ages = c(5,87)
+)
+
+out3A <- run_simulation(sim_length, tbv_paramsA)
+
+tbv_paramsB <- set_tbv(
+  simparams,
+  timesteps = c(7,8)*year + peak - 2*month,
+  coverages = rep(0.9, 2),
+  adult_scaling = 0.4,
+  ages = c(5,87)
+)
+
+out3B <- run_simulation(sim_length, tbv_paramsB)
+
+tbv_paramsC <- set_tbv(
+  simparams,
+  timesteps = c(7,8)*year + peak - 2*month,
+  coverages = rep(0.9, 2),
+  adult_scaling = 0.2,
+  ages = c(5,87)
+)
+
+out3C <- run_simulation(sim_length, tbv_paramsC)
+
+df3 <- data.frame('t' = out1$timestep/365, 
+                  'pr1'=out1$n_detect_lm_0_36500/out1$n_age_0_36500,
+                  'pr3'=out3$n_detect_lm_0_36500/out3$n_age_0_36500,
+                  'pr3A'=out3A$n_detect_lm_0_36500/out3A$n_age_0_36500,
+                  'pr3B'=out3B$n_detect_lm_0_36500/out3B$n_age_0_36500,
+                  'pr3C'=out3C$n_detect_lm_0_36500/out3C$n_age_0_36500)
+ggplot(df3) + geom_line(aes(x = t, y = pr1)) + theme_classic() + 
+  geom_line(aes(x = t, y = pr3), color = 'purple') + xlim(c(7,10)) + 
+  geom_line(aes(x = t, y = pr3A), color = 'magenta') +
+  geom_line(aes(x = t, y = pr3B), color = 'orange') +
+  geom_line(aes(x = t, y = pr3C), color = 'darkgreen') 
+
+df3i <- data.frame('t' = out1$timestep/365, 
+                   'inc1' = out1$n_inc_clinical_0_36500/out1$n_age_0_36500,
+                   'inc3' = out3$n_inc_clinical_0_36500/out3$n_age_0_36500,
+                   'inc3A' = out3A$n_inc_clinical_0_36500/out3A$n_age_0_36500,
+                   'inc3B' = out3B$n_inc_clinical_0_36500/out3B$n_age_0_36500,
+                   'inc3C' = out3C$n_inc_clinical_0_36500/out3C$n_age_0_36500)
+
+ggplot(df3i) + geom_line(aes(x = t, y = inc1)) + theme_classic() + 
+  geom_line(aes(x = t, y = inc3), color = 'purple') + xlim(c(7,10)) + 
+  geom_line(aes(x = t, y = inc3A), color = 'magenta') +
+  geom_line(aes(x = t, y = inc3B), color = 'orange') +
+  geom_line(aes(x = t, y = inc3C), color = 'darkgreen')
+
+#cumulative inc
+tt <- R21params$mass_pev_timesteps + 90
+
+ci <- out1$n_inc_clinical_0_36500[(tt):sim_length]
+ci3 <- out3$n_inc_clinical_0_36500[(tt):sim_length]
+ci3A <- out3A$n_inc_clinical_0_36500[(tt):sim_length]
+ci3B <- out3B$n_inc_clinical_0_36500[(tt):sim_length]
+ci3C <- out3C$n_inc_clinical_0_36500[(tt):sim_length]
+
+for(i in 2:(length(ci))){
+  ci[i] <- ci[i] + ci[i-1]
+  ci3[i] <- ci3[i] + ci3[i-1]
+  ci3A[i] <- ci3A[i] + ci3A[i-1]
+  ci3B[i] <- ci3B[i] + ci3B[i-1]
+  ci3C[i] <- ci3C[i] + ci3C[i-1]
+}
+gh3 <- data.frame('t' = seq((tt):sim_length)/365, 
+                 'ci' = ci, 'ci3' = ci3, 'ci3A' = ci3A, 'ci3B' = ci3B, 'ci3C' = ci3C)#, 'prop' = (1-ci3/ci2))
+ggplot(gh3) + geom_line(aes(x=t, y=ci)) + 
+  geom_line(aes(x=t, y=ci2), color = 'purple') + theme_classic() + 
+  geom_line(aes(x=t, y=ci2A),color = 'magenta') +  
+  geom_line(aes(x=t, y=ci2B),color = 'orange') +
+  geom_line(aes(x=t, y=ci2C),color = 'darkgreen') 
