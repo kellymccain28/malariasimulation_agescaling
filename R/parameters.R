@@ -412,7 +412,7 @@ get_parameters <- function(overrides = list()) {
     pev_doses = c(0, 1.5 * 30, 3 * 30),
     # tbv
     tbv = FALSE,
-    tbv_mt = 35,
+    tbv_mt = 35, #JDC:  remove all these?
     tbv_md = 46.7,
     tbv_ma = 3.6,
     tbv_mu = 0.8,
@@ -427,6 +427,9 @@ get_parameters <- function(overrides = list()) {
     tbv_timesteps = NULL,
     tbv_coverages = NULL,
     tbv_ages = NULL,
+    tbv_adult_scaling = 1, #JDC:  default means no down-scaling??? And not included here for pev???
+    #JDC: as I've hard-wired in the scaling into the antibody function, we will always need a value for adult scaling. This should be fixed
+    mass_pev_adult_scaling = 1,
     # antimalarial resistance
     antimalarial_resistance = FALSE,
     antimalarial_resistance_drug = NULL,
