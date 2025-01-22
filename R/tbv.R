@@ -80,8 +80,9 @@ create_tbv_listener <- function(variables, events, parameters, correlations, ren
 }
 
 #JDC: Add Age at vaccination
-calculate_tbv_antibodies <- function(t, tau, rho, ds, dl, adult_scaling) { # t, age at vaccination. Anything else?
+calculate_tbv_antibodies <- function(t, tau, rho, ds, dl, adult_scaling){ # t, age at vaccination. Anything else?
   tau * adult_scaling * (rho * exp(-t * log(2) / ds) + (1 - rho) * exp(-t * log(2) / dl))
+  #tau * (rho * exp(-t * log(2) / ds) + (1 - rho) * exp(-t * log(2) / dl))
 }
 
 calculate_TRA <- function(mu, gamma1, gamma2, antibodies) {

@@ -216,7 +216,7 @@ calculate_pev_antibodies <- function(
     rho * exp(-t * log(2) / ds) + (
       1 - rho
     ) * exp(-t * log(2) / dl)
-  ) * parameters$mass_pev_adult_scaling # note: this could be accidentally applied to the EPI vaccination!!!! Although param only altered in set_mass_pev... So mabes ok
+  ) * parameters$mass_pev_adult_scaling # JDC: this could be accidentally applied to the EPI vaccination!!!! Although param only altered in set_mass_pev... So mabes ok
 }
 
 calculate_pev_efficacy <- function(antibodies, vmax, beta, alpha) {

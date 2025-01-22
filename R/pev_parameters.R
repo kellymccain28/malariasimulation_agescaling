@@ -212,7 +212,7 @@ set_mass_pev <- function(
   stopifnot(all(min_ages >= 0 & max_ages >= 0))
   stopifnot(all(booster_spacing > 0))
   stopifnot(all(booster_coverage >= 0 & booster_coverage <= 1))
-  stopifnot(adult_scaling < 1 && adult_scaling > 0)
+  stopifnot(adult_scaling <= 1 && adult_scaling > 0)
   if (length(min_ages) != length(max_ages)) {
     stop('min and max ages do not align')
   }
