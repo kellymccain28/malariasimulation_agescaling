@@ -43,13 +43,13 @@ simparams <- set_clinical_treatment(simparams, 1, 1, 0.5 )
 
 simparams <- set_equilibrium(simparams, starting_EIR)
 
+peak <- peak_season_offset(simparams)
+peak
+
 out1 <- run_simulation(sim_length, simparams)
 
 ggplot(out1) + geom_line(aes(x = timestep, y = n_detect_lm_0_36500/ n_age_0_36500)) + 
   theme_classic()
-
-peak <- peak_season_offset(simparams)
-peak
 
 ######################### 2. PEV only (R21) ##########################
 
@@ -175,7 +175,7 @@ tbv_params <- set_tbv(
   timesteps = c(7,8)*year + peak - 2*month,
   coverages = rep(0.9, 2),
   adult_scaling = 1,
-  ages = c(5,87)
+  ages = c(16,99)
 )
 
 out3 <- run_simulation(sim_length, tbv_params)
@@ -185,7 +185,7 @@ tbv_paramsA <- set_tbv(
   timesteps = c(7,8)*year + peak - 2*month,
   coverages = rep(0.9, 2),
   adult_scaling = 0.7,
-  ages = c(5,87)
+  ages = c(16,99)
 )
 
 out3A <- run_simulation(sim_length, tbv_paramsA)
@@ -195,7 +195,7 @@ tbv_paramsB <- set_tbv(
   timesteps = c(7,8)*year + peak - 2*month,
   coverages = rep(0.9, 2),
   adult_scaling = 0.4,
-  ages = c(5,87)
+  ages = c(16,99)
 )
 
 out3B <- run_simulation(sim_length, tbv_paramsB)
@@ -205,7 +205,7 @@ tbv_paramsC <- set_tbv(
   timesteps = c(7,8)*year + peak - 2*month,
   coverages = rep(0.9, 2),
   adult_scaling = 0.2,
-  ages = c(5,87)
+  ages = c(16,99)
 )
 
 out3C <- run_simulation(sim_length, tbv_paramsC)
@@ -258,3 +258,72 @@ ggplot(gh3) + geom_line(aes(x=t, y=ci)) +
   geom_line(aes(x=t, y=ci3A),color = 'magenta') +  ylim(c(0,46000)) +
   geom_line(aes(x=t, y=ci3B),color = 'orange') +
   geom_line(aes(x=t, y=ci3C),color = 'darkgreen') + xlim(c(0,2))
+
+#################### TBV, but on non-scaled age groups
+
+
+tbv_params <- set_tbv(
+  simparams,
+  timesteps = c(7,8)*year + peak - 2*month,
+  coverages = rep(0.9, 2),
+  adult_scaling = 1,
+  ages = c(0,15)
+)
+
+out4 <- run_simulation(sim_length, tbv_params)
+
+tbv_paramsA <- set_tbv(
+  simparams,
+  timesteps = c(7,8)*year + peak - 2*month,
+  coverages = rep(0.9, 2),
+  adult_scaling = 0.7,
+  ages = c(0,15)
+)
+
+out4A <- run_simulation(sim_length, tbv_paramsA)
+
+tbv_paramsB <- set_tbv(
+  simparams,
+  timesteps = c(7,8)*year + peak - 2*month,
+  coverages = rep(0.9, 2),
+  adult_scaling = 0.4,
+  ages = c(0,15)
+)
+
+out4B <- run_simulation(sim_length, tbv_paramsB)
+
+tbv_paramsC <- set_tbv(
+  simparams,
+  timesteps = c(7,8)*year + peak - 2*month,
+  coverages = rep(0.9, 2),
+  adult_scaling = 0.2,
+  ages = c(0,15)
+)
+
+out4C <- run_simulation(sim_length, tbv_paramsC)
+
+
+#cumulative inc
+tt <- tbv_params$tbv_timesteps[1]
+
+ci <- out1$n_inc_clinical_0_36500[(tt):sim_length]
+ci4 <- out4$n_inc_clinical_0_36500[(tt):sim_length]
+ci4A <- out4A$n_inc_clinical_0_36500[(tt):sim_length]
+ci4B <- out4B$n_inc_clinical_0_36500[(tt):sim_length]
+ci4C <- out4C$n_inc_clinical_0_36500[(tt):sim_length]
+
+for(i in 2:(length(ci))){
+  ci[i] <- ci[i] + ci[i-1]
+  ci4[i] <- ci4[i] + ci4[i-1]
+  ci4A[i] <- ci4A[i] + ci4A[i-1]
+  ci4B[i] <- ci4B[i] + ci4B[i-1]
+  ci4C[i] <- ci4C[i] + ci4C[i-1]
+}
+gh4 <- data.frame('t' = seq((tt):sim_length)/365, 
+                  'ci' = ci, 'ci4' = ci4, 'ci4A' = ci4A, 'ci4B' = ci4B, 'ci4C' = ci4C)#, 'prop' = (1-ci3/ci2))
+ggplot(gh4) + geom_line(aes(x=t, y=ci)) + 
+  geom_line(aes(x=t, y=ci4), color = 'purple') + theme_classic() + 
+  geom_line(aes(x=t, y=ci4A),color = 'magenta') +  ylim(c(0,46000)) +
+  geom_line(aes(x=t, y=ci4B),color = 'orange') +
+  geom_line(aes(x=t, y=ci4C),color = 'darkgreen') + xlim(c(0,2))
+
