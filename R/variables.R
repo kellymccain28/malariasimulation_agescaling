@@ -216,6 +216,7 @@ create_variables <- function(parameters) {
   tbv_iiv1 <- individual::DoubleVariable$new(rnorm(size, 0, 1))
   tbv_iiv2 <- individual::DoubleVariable$new(rnorm(size, 0, 1))
   tbv_iiv3 <- individual::DoubleVariable$new(rnorm(size, 0, 1))
+  tbv_iiv4 <- individual::DoubleVariable$new(rnorm(size, 0, 1))
 
   # Init vector controls
   net_time <- individual::IntegerVariable$new(rep(-1, size))
@@ -244,9 +245,10 @@ create_variables <- function(parameters) {
     last_eff_pev_timestep = last_eff_pev_timestep,
     pev_profile = pev_profile,
     tbv_vaccinated = tbv_vaccinated,
-    #tbv_iiv1 = tbv_iiv1,
-    #tbv_iiv2 = tbv_iiv2, # but give better names
-    #tbv_iiv3 = tbv_iiv3,
+    tbv_iiv1 = tbv_iiv1,
+    tbv_iiv2 = tbv_iiv2, # but give better names
+    tbv_iiv3 = tbv_iiv3,
+    tbv_iiv4 = tbv_iiv4,
     net_time = net_time,
     spray_time = spray_time
   )

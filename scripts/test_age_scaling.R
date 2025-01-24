@@ -236,7 +236,7 @@ ggplot(df3i) + geom_line(aes(x = t, y = inc1)) + theme_classic() +
   geom_line(aes(x = t, y = inc3C), color = 'darkgreen')
 
 #cumulative inc
-tt <- R21params$mass_pev_timesteps + 90
+tt <- tbv_params$tbv_timesteps[1]
 
 ci <- out1$n_inc_clinical_0_36500[(tt):sim_length]
 ci3 <- out3$n_inc_clinical_0_36500[(tt):sim_length]
@@ -254,7 +254,7 @@ for(i in 2:(length(ci))){
 gh3 <- data.frame('t' = seq((tt):sim_length)/365, 
                  'ci' = ci, 'ci3' = ci3, 'ci3A' = ci3A, 'ci3B' = ci3B, 'ci3C' = ci3C)#, 'prop' = (1-ci3/ci2))
 ggplot(gh3) + geom_line(aes(x=t, y=ci)) + 
-  geom_line(aes(x=t, y=ci2), color = 'purple') + theme_classic() + 
-  geom_line(aes(x=t, y=ci2A),color = 'magenta') +  
-  geom_line(aes(x=t, y=ci2B),color = 'orange') +
-  geom_line(aes(x=t, y=ci2C),color = 'darkgreen') 
+  geom_line(aes(x=t, y=ci3), color = 'purple') + theme_classic() + 
+  geom_line(aes(x=t, y=ci3A),color = 'magenta') +  ylim(c(0,46000)) +
+  geom_line(aes(x=t, y=ci3B),color = 'orange') +
+  geom_line(aes(x=t, y=ci3C),color = 'darkgreen') + xlim(c(0,2))
