@@ -9,12 +9,15 @@ library(gridExtra)
 year <- 365
 month <- 30 # ish
 sim_length <- 10 * year
-human_population <- 25000
+human_population <- 19000
 starting_EIR <- 70
 
 #One way to link seasonality to admin units- using input from deterministic package
-seas <- read.csv('C:\\Users\\jchallen\\Dropbox\\NC_data_code\\deterministic-malaria-model-master-NC\\data-raw\\admin_units_seasonal.csv')
-lst <- as.numeric(seas[seas$NAME_0=='Burkina Faso' & seas$NAME_1=='Sahel',5:11])
+#seas <- read.csv('C:\\Users\\jchallen\\Dropbox\\NC_data_code\\deterministic-malaria-model-master-NC\\data-raw\\admin_units_seasonal.csv')
+#lst <- as.numeric(seas[seas$NAME_0=='Burkina Faso' & seas$NAME_1=='Sahel',5:11])
+
+seas <- read.csv('/Users/jchallen/Documents/Git/deterministic-malaria-model/data-raw/admin_units_seasonal.csv')
+lst <- as.numeric(seas[seas$NAME_0=='Burkina Faso' & seas$NAME_1=='Cascades',5:11])
 
 simparams <- get_parameters(list(
   human_population = human_population,
@@ -174,18 +177,19 @@ tbv_params <- set_tbv(
   simparams,
   timesteps = c(7,8)*year + peak - 2*month,
   coverages = rep(0.9, 2),
-  adult_scaling = 1,
-  ages = c(16,99)
+  ages = seq(1,99), #not c(1,99)
+  adult_scaling = 1
 )
 
 out3 <- run_simulation(sim_length, tbv_params)
+table(out3$n_vaccinated_tbv) #???
 
 tbv_paramsA <- set_tbv(
   simparams,
   timesteps = c(7,8)*year + peak - 2*month,
   coverages = rep(0.9, 2),
   adult_scaling = 0.7,
-  ages = c(16,99)
+  ages = seq(1,99)
 )
 
 out3A <- run_simulation(sim_length, tbv_paramsA)
@@ -195,7 +199,7 @@ tbv_paramsB <- set_tbv(
   timesteps = c(7,8)*year + peak - 2*month,
   coverages = rep(0.9, 2),
   adult_scaling = 0.4,
-  ages = c(16,99)
+  ages = seq(1,99)
 )
 
 out3B <- run_simulation(sim_length, tbv_paramsB)
@@ -205,7 +209,7 @@ tbv_paramsC <- set_tbv(
   timesteps = c(7,8)*year + peak - 2*month,
   coverages = rep(0.9, 2),
   adult_scaling = 0.2,
-  ages = c(16,99)
+  ages = seq(1,99)
 )
 
 out3C <- run_simulation(sim_length, tbv_paramsC)
@@ -255,7 +259,7 @@ gh3 <- data.frame('t' = seq((tt):sim_length)/365,
                  'ci' = ci, 'ci3' = ci3, 'ci3A' = ci3A, 'ci3B' = ci3B, 'ci3C' = ci3C)#, 'prop' = (1-ci3/ci2))
 ggplot(gh3) + geom_line(aes(x=t, y=ci)) + 
   geom_line(aes(x=t, y=ci3), color = 'purple') + theme_classic() + 
-  geom_line(aes(x=t, y=ci3A),color = 'magenta') +  ylim(c(0,46000)) +
+  geom_line(aes(x=t, y=ci3A),color = 'magenta') +  ylim(c(0,33000)) +
   geom_line(aes(x=t, y=ci3B),color = 'orange') +
   geom_line(aes(x=t, y=ci3C),color = 'darkgreen') + xlim(c(0,2))
 
@@ -267,7 +271,7 @@ tbv_params <- set_tbv(
   timesteps = c(7,8)*year + peak - 2*month,
   coverages = rep(0.9, 2),
   adult_scaling = 1,
-  ages = c(0,15)
+  ages = seq(0,15)
 )
 
 out4 <- run_simulation(sim_length, tbv_params)
@@ -277,7 +281,7 @@ tbv_paramsA <- set_tbv(
   timesteps = c(7,8)*year + peak - 2*month,
   coverages = rep(0.9, 2),
   adult_scaling = 0.7,
-  ages = c(0,15)
+  ages = seq(0,15)
 )
 
 out4A <- run_simulation(sim_length, tbv_paramsA)
@@ -297,7 +301,7 @@ tbv_paramsC <- set_tbv(
   timesteps = c(7,8)*year + peak - 2*month,
   coverages = rep(0.9, 2),
   adult_scaling = 0.2,
-  ages = c(0,15)
+  ages = seq(0,15)
 )
 
 out4C <- run_simulation(sim_length, tbv_paramsC)
@@ -323,7 +327,74 @@ gh4 <- data.frame('t' = seq((tt):sim_length)/365,
                   'ci' = ci, 'ci4' = ci4, 'ci4A' = ci4A, 'ci4B' = ci4B, 'ci4C' = ci4C)#, 'prop' = (1-ci3/ci2))
 ggplot(gh4) + geom_line(aes(x=t, y=ci)) + 
   geom_line(aes(x=t, y=ci4), color = 'purple') + theme_classic() + 
-  geom_line(aes(x=t, y=ci4A),color = 'magenta') +  ylim(c(0,46000)) +
+  geom_line(aes(x=t, y=ci4A),color = 'magenta') +  ylim(c(0,33000)) +
   geom_line(aes(x=t, y=ci4B),color = 'orange') +
   geom_line(aes(x=t, y=ci4C),color = 'darkgreen') + xlim(c(0,2))
+
+#################### TBV, but ONLY on scaled age groups
+
+tbv_params <- set_tbv(
+  simparams,
+  timesteps = c(7,8)*year + peak - 2*month,
+  coverages = rep(0.9, 2),
+  adult_scaling = 1,
+  ages = seq(16,99)
+)
+
+out5 <- run_simulation(sim_length, tbv_params)
+
+tbv_paramsA <- set_tbv(
+  simparams,
+  timesteps = c(7,8)*year + peak - 2*month,
+  coverages = rep(0.9, 2),
+  adult_scaling = 0.7,
+  ages = seq(16,99)
+)
+
+out5A <- run_simulation(sim_length, tbv_paramsA)
+
+tbv_paramsB <- set_tbv(
+  simparams,
+  timesteps = c(7,8)*year + peak - 2*month,
+  coverages = rep(0.9, 2),
+  adult_scaling = 0.4,
+  ages = seq(16,99)
+)
+
+out5B <- run_simulation(sim_length, tbv_paramsB)
+
+tbv_paramsC <- set_tbv(
+  simparams,
+  timesteps = c(7,8)*year + peak - 2*month,
+  coverages = rep(0.9, 2),
+  adult_scaling = 0.2,
+  ages = c(16,99)
+)
+
+out5C <- run_simulation(sim_length, tbv_paramsC)
+
+
+#cumulative inc
+tt <- tbv_params$tbv_timesteps[1]
+
+ci <- out1$n_inc_clinical_0_36500[(tt):sim_length]
+ci5 <- out5$n_inc_clinical_0_36500[(tt):sim_length]
+ci5A <- out5A$n_inc_clinical_0_36500[(tt):sim_length]
+ci5B <- out5B$n_inc_clinical_0_36500[(tt):sim_length]
+ci5C <- out5C$n_inc_clinical_0_36500[(tt):sim_length]
+
+for(i in 2:(length(ci))){
+  ci[i] <- ci[i] + ci[i-1]
+  ci5[i] <- ci5[i] + ci5[i-1]
+  ci5A[i] <- ci5A[i] + ci5A[i-1]
+  ci5B[i] <- ci5B[i] + ci5B[i-1]
+  ci5C[i] <- ci5C[i] + ci5C[i-1]
+}
+gh5 <- data.frame('t' = seq((tt):sim_length)/365, 
+                  'ci' = ci, 'ci5' = ci5, 'ci5A' = ci5A, 'ci5B' = ci5B, 'ci5C' = ci5C)#, 'prop' = (1-ci3/ci2))
+ggplot(gh5) + geom_line(aes(x=t, y=ci)) + 
+  geom_line(aes(x=t, y=ci5), color = 'purple') + theme_classic() + 
+  geom_line(aes(x=t, y=ci5A),color = 'magenta') +  ylim(c(0,35000)) +
+  geom_line(aes(x=t, y=ci5B),color = 'orange') +
+  geom_line(aes(x=t, y=ci5C),color = 'darkgreen') + xlim(c(0,2))
 
