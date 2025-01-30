@@ -210,15 +210,31 @@ calculate_pev_antibodies <- function(
   rho,
   ds,
   dl,
+  age_agent, # JDC: for age-dependent scaling
   parameters
-  #add age, using get_age() function
   ) {
-  cs * (
-    rho * exp(-t * log(2) / ds) + (
-      1 - rho
-    ) * exp(-t * log(2) / dl)
-  ) * parameters$mass_pev_adult_scaling # JDC: this could be accidentally applied to the EPI vaccination!!!! Although param only altered in set_mass_pev... So mabes ok
-} # if adult, then scale. Don't scale everyone!
+  
+  #use vnapply
+  vnapply(
+    seq_along(age_agent),
+    function(i) {
+      #unpack params
+      age <- age_agent[[i]] # age
+      tt <- t[[i]]
+  
+      scaling <- 1
+      if(age > 16*365){
+        scaling <- parameters$mass_pev_adult_scaling
+      }
+  
+      cs * (
+        rho * exp(-tt * log(2) / ds) + (
+          1 - rho
+        ) * exp(-tt * log(2) / dl)
+      ) * scaling # JDC: 
+    } 
+  )    
+} 
 
 calculate_pev_efficacy <- function(antibodies, vmax, beta, alpha) {
   vmax * (

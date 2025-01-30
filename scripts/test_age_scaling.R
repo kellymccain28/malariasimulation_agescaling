@@ -1,4 +1,4 @@
-suppressPackageStartupMessages(library(ggplot2))
+#suppressPackageStartupMessages(library(ggplot2))
 library(malariasimulation)
 library(malariaEquilibrium)
 library(cowplot)
@@ -62,12 +62,12 @@ R21params <- set_mass_pev(
   profile = r21_profile,
   coverages = c(0.9),
   min_wait = 0,
-  min_ages = 5*year, # The minimum age for the target population to be vaccinated. 
-  max_ages = 63 * year, # The maximum age for the target population to be vaccinated.
+  min_ages = 5*year, #
+  max_ages = 63 * year, #
   timesteps = c(7)*year + peak - 3.5*month,
   adult_scaling = 1,
-  booster_spacing = c(1*year), # The booster is given 10 years after?
-  booster_coverage = matrix(rep(0.95,1), nrow = 1, ncol= 1),#, # Coverage of the booster dose is 5%.
+  booster_spacing = c(1*year), 
+  booster_coverage = matrix(rep(0.95,1), nrow = 1, ncol= 1),
   booster_profile = list(r21_booster_profile)
 )
 
