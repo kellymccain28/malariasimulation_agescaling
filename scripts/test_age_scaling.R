@@ -164,7 +164,7 @@ for(i in 2:(length(ci))){
 }
 gh <- data.frame('t' = seq((tt):sim_length)/365, 
                  'ci' = ci, 'ci2' = ci2, 'ci2A' = ci2A, 'ci2B' = ci2B, 'ci2C' = ci2C)#, 'prop' = (1-ci3/ci2))
-ggplot(gh) + geom_line(aes(x=t, y=ci)) + 
+ggplot(gh) + #geom_line(aes(x=t, y=ci)) + 
   geom_line(aes(x=t, y=ci2), color = 'purple') + theme_classic() + 
   geom_line(aes(x=t, y=ci2A),color = 'magenta') +  
   geom_line(aes(x=t, y=ci2B),color = 'orange') +
