@@ -226,6 +226,8 @@ calculate_pev_antibodies <- function(
       scaling <- 1
       if(age > 16*365){
         scaling <- parameters$mass_pev_adult_scaling
+      } else if(age < 16*365 & age > 5*365){ 
+        scaling <- parameters$pev_adolesc_scaling
       }
   
       cs[[i]] * (
