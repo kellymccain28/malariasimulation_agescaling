@@ -122,7 +122,7 @@ calculate_tbv_antibodies <- function(t, tbv_iiv1, tbv_iiv2, tbv_iiv3, tbv_iiv4, 
       rs <- exp(3.74 + 0.59*iiv1)
       rl <- exp(5.79 + 0.81*iiv2)
       rho <- invlogit(0.765 + 0.725*iiv3)
-      peak <- exp(8.202 + 0.66*iiv4) #ish (4th dose)
+      peak <- exp(7.34 + 0.66*iiv4) #ish (4th dose)
       
       scaling <- 1
       if(age_agent > 16*365){
