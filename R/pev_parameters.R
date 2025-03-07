@@ -137,7 +137,7 @@ set_pev_epi <- function(
   
   # Check that antibody scaling value is between 0 and 1
   stopifnot(adolesc_scaling <= 1 && adolesc_scaling > 0)
-
+  
   # Check that seasonal booster parameters make sense
   stopifnot(min_wait >= 0)
   stopifnot(age >= 0)
