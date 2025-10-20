@@ -118,7 +118,8 @@ set_pev_epi <- function(
   booster_coverage,
   booster_profile,
   seasonal_boosters = FALSE,
-  adolesc_scaling
+  adolesc_scaling,
+  u5_scaling
   ) {
   stopifnot(all(coverages >= 0) && all(coverages <= 1))
   stopifnot(is.matrix(booster_coverage))
@@ -137,6 +138,7 @@ set_pev_epi <- function(
   
   # Check that antibody scaling value is between 0 and 1
   stopifnot(adolesc_scaling <= 1 && adolesc_scaling > 0)
+  stopifnot(u5_scaling <= 1 && u5_scaling > 0)
   
   # Check that seasonal booster parameters make sense
   stopifnot(min_wait >= 0)
@@ -177,6 +179,7 @@ set_pev_epi <- function(
   parameters$pev_epi_profile_indices <- profile_indices
   parameters$pev_epi_seasonal_boosters <- seasonal_boosters
   parameters$pev_adolesc_scaling <- adolesc_scaling
+  parameters$pev_u5_scaling <- u5_scaling
   parameters
 }
 
@@ -210,7 +213,8 @@ set_mass_pev <- function(
   booster_coverage,
   booster_profile,
   adult_scaling,
-  adolesc_scaling
+  adolesc_scaling,
+  u5_scaling
   ) {
   stopifnot(all(timesteps >= 1))
   stopifnot(min_wait >= 0)
@@ -220,6 +224,7 @@ set_mass_pev <- function(
   stopifnot(all(booster_coverage >= 0 & booster_coverage <= 1))
   stopifnot(adult_scaling <= 1 && adult_scaling > 0)
   stopifnot(adolesc_scaling <= 1 && adolesc_scaling > 0)
+  stopifnot(u5_scaling <= 1 && u5_scaling > 0)
   if (length(min_ages) != length(max_ages)) {
     stop('min and max ages do not align')
   }
@@ -259,5 +264,6 @@ set_mass_pev <- function(
   parameters$mass_pev_profile_indices <- profile_indices
   parameters$mass_pev_adult_scaling <- adult_scaling
   parameters$pev_adolesc_scaling <- adolesc_scaling
+  parameters$pev_u5_scaling <- u5_scaling
   parameters
 }
