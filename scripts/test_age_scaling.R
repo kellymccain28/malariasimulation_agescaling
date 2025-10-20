@@ -10,7 +10,7 @@ library(gridExtra)
 year <- 365
 month <- 30 # ish
 sim_length <- 10 * year
-human_population <- 19000
+human_population <- 7000
 starting_EIR <- 70
 
 #One way to link seasonality to admin units- using input from deterministic package
@@ -48,26 +48,27 @@ simparams <- set_equilibrium(simparams, starting_EIR)
 
 peak <- peak_season_offset(simparams)
 peak
-simparams <- set_mass_pev(
-  simparams,
-  profile = r21_profile,
-  coverages = c(0),
-  min_wait = 0,
-  min_ages = 6*month, #
-  max_ages = 63 * year, #
-  timesteps = c(7)*year + peak - 3.5*month,
-  adult_scaling = 1,
-  adolesc_scaling = 1,
-  booster_spacing = c(1*year), 
-  booster_coverage = matrix(rep(0.95,1), nrow = 1, ncol= 1),
-  booster_profile = list(r21_booster_profile)
-)
-
-
-out1 <- malariasimulation::run_simulation(sim_length, simparams)
-
-ggplot(out1) + geom_line(aes(x = timestep, y = n_detect_lm_0_36500/ n_age_0_36500)) + 
-  theme_classic()
+# simparams <- set_mass_pev(
+#   simparams,
+#   profile = r21_profile,
+#   coverages = c(0),
+#   min_wait = 0,
+#   min_ages = 6*month, #
+#   max_ages = 63 * year, #
+#   timesteps = c(7)*year + peak - 3.5*month,
+#   adult_scaling = 1,
+#   adolesc_scaling = 1,
+#   u5_scaling = 1, 
+#   booster_spacing = c(1*year), 
+#   booster_coverage = matrix(rep(0.95,1), nrow = 1, ncol= 1),
+#   booster_profile = list(r21_booster_profile)
+# )
+# 
+# 
+# out1 <- malariasimulation::run_simulation(sim_length, simparams)
+# 
+# ggplot(out1) + geom_line(aes(x = timestep, y = n_detect_lm_0_36500/ n_age_0_36500)) + 
+#   theme_classic()
 
 ######################### 2. PEV only (R21) ##########################
 
@@ -208,6 +209,39 @@ R21params_G <- set_pev_epi(
 
 out2G <- run_simulation(sim_length, R21params_G)
 
+R21params_u5A <- set_mass_pev(
+  simparams,
+  profile = r21_profile,
+  coverages = c(0.9),
+  min_wait = 0,
+  min_ages = 6 * month, # The minimum age for the target population to be vaccinated. 
+  max_ages = 5 * year, # The maximum age for the target population to be vaccinated.
+  timesteps = c(3)*year + peak - 3.5*month,
+  u5_scaling = 1,
+  booster_spacing = c(1*year), # The booster is given 1 year after
+  booster_coverage = matrix(rep(0.95,1), nrow = 1, ncol= 1),#, # Coverage of the booster dose is 95%.
+  booster_profile = list(r21_booster_profile)
+)
+
+outu5A <- run_simulation(sim_length, R21params_u5A)
+
+R21params_u5b <- set_mass_pev(
+  simparams,
+  profile = r21_profile,
+  coverages = c(0.9),
+  min_wait = 0,
+  min_ages = 6 * month, # The minimum age for the target population to be vaccinated. 
+  max_ages = 5 * year, # The maximum age for the target population to be vaccinated.
+  timesteps = c(3)*year + peak - 3.5*month,
+  u5_scaling = 0.1,
+  booster_spacing = c(1*year), # The booster is given 1 year after
+  booster_coverage = matrix(rep(0.95,1), nrow = 1, ncol= 1),#, # Coverage of the booster dose is 95%.
+  booster_profile = list(r21_booster_profile)
+)
+
+outu5b <- run_simulation(sim_length, R21params_u5b)
+
+
 df4 <- data.frame('t' = out1$timestep/365, 
                   'pr1'=out1$n_detect_lm_0_36500/out1$n_age_0_36500, # no mass vaccination
                   'pr2'=out2$n_detect_lm_0_36500/out2$n_age_0_36500, # normal mass vaccination to adults
@@ -216,9 +250,17 @@ df4 <- data.frame('t' = out1$timestep/365,
                   'pr2C'=out2C$n_detect_lm_0_36500/out2C$n_age_0_36500, # adult - 0.2 scaling
                   'pr2D'=out2D$n_detect_lm_0_36500/out2D$n_age_0_36500, # no age scaling for ados - mass
                   'pr2E'=out2E$n_detect_lm_0_36500/out2E$n_age_0_36500, # age scaling for ados - mass
-                  'pr2F'=out2F$n_detect_lm_0_36500/out2F$n_age_0_36500, # no age scaling for ados - epi 
-                  'pr2G'=out2G$n_detect_lm_0_36500/out2G$n_age_0_36500 # age scaling for ados - epi 
+                  'pr2F'=out2F$n_detect_lm_0_36500/out2F$n_age_0_36500, # no age scaling for ados - epi
+                  'pr2G'=out2G$n_detect_lm_0_36500/out2G$n_age_0_36500, # age scaling for ados - epi
+                  'pru5a'=outu5A$n_detect_lm_0_36500/outu5A$n_age_0_36500, # no age scaling for children - mass
+                  'pru5b'=outu5b$n_detect_lm_0_36500/outu5b$n_age_0_36500 # age scaling for childre - mass
 ) 
+ggplot(df4) +
+  geom_line(aes(x = t, y = pru5a, color = 'no u5 scaling'))+
+  geom_line(aes(x = t, y = pru5b, color = 'u5 scaling, 0.1'))+
+  geom_line(aes(x=t, y=pr2, color = 'mass adults, no scaling'), linewidth= 1) +  
+  geom_line(aes(x=t, y=pr2A, color = 'mass adults, 0.64'), linewidth= 1) 
+
 ggplot(df4) + #geom_line(aes(x=t, y=ci)) + 
   geom_line(aes(x=t, y=pr1, color = 'no vac'), linewidth= 1) + theme_classic() + 
   geom_line(aes(x=t, y=pr2, color = 'mass adults, no scaling'), linewidth= 1) +  
