@@ -118,8 +118,8 @@ set_pev_epi <- function(
   booster_coverage,
   booster_profile,
   seasonal_boosters = FALSE,
-  adolesc_scaling,
-  u5_scaling
+  adolesc_scaling = 1,
+  u5_scaling = 1
   ) {
   stopifnot(all(coverages >= 0) && all(coverages <= 1))
   stopifnot(is.matrix(booster_coverage))
@@ -212,9 +212,9 @@ set_mass_pev <- function(
   booster_spacing,
   booster_coverage,
   booster_profile,
-  adult_scaling,
-  adolesc_scaling,
-  u5_scaling
+  adult_scaling = 1,
+  adolesc_scaling = 1,
+  u5_scaling = 1
   ) {
   stopifnot(all(timesteps >= 1))
   stopifnot(min_wait >= 0)
