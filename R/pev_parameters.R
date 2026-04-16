@@ -191,7 +191,10 @@ set_pev_epi <- function(
 #' @param parameters a list of parameters to modify
 #' @param profile a list of details for the vaccine profile, create with `create_pev_profile`
 #' @param timesteps a vector of timesteps for each round of vaccinations
-#' @param coverages the coverage for each round of vaccinations
+#' @param coverages the coverage for each round of vaccinations. May be a
+#' numeric scalar or vector aligned with `timesteps`, or a matrix with rows
+#' aligned with `timesteps` and columns aligned with the `min_ages` /
+#' `max_ages` pairs to specify age-varying coverage within each round.
 #' @param min_wait the minimum acceptable time since the last vaccination (in timesteps);
 #' When using both set_mass_pev and set_pev_epi, this represents the minimum
 #' time between an individual being vaccinated under one scheme and vaccinated under another.
@@ -218,6 +221,7 @@ set_mass_pev <- function(
   ) {
   stopifnot(all(timesteps >= 1))
   stopifnot(min_wait >= 0)
+  stopifnot(is.numeric(coverages))
   stopifnot(all(coverages >= 0) && all(coverages <= 1))
   stopifnot(all(min_ages >= 0 & max_ages >= 0))
   stopifnot(all(booster_spacing > 0))
@@ -227,6 +231,17 @@ set_mass_pev <- function(
   stopifnot(u5_scaling <= 1 && u5_scaling > 0)
   if (length(min_ages) != length(max_ages)) {
     stop('min and max ages do not align')
+  }
+
+  if (is.matrix(coverages)) {
+    if (nrow(coverages) != length(timesteps)) {
+      stop('coverages matrix rows and timesteps do not align')
+    }
+    if (ncol(coverages) != length(min_ages)) {
+      stop('coverages matrix columns and age groups do not align')
+    }
+  } else if (length(coverages) != length(timesteps)) {
+    stop('coverages and timesteps must align')
   }
 
   # Check that booster_spacing are monotonically increasing
